@@ -27,7 +27,7 @@
                     return response.text();
                 })
                 .then(data => {
-                    const links = data.split('\n').filter(line => line.trim() !== '').map(line => line.split(',')[0].trim());
+                    const links = data.split('\n').filter(line => line.trim() !== '').map(line => line.split(',')[0].trim().replace('wa.me', 'web.whatsapp.com'));
                     const cantidad = links.length;
                     const mensaje = `CANTIDAD DE MENSAJES A ENVIAR: ${cantidad}`;
 
