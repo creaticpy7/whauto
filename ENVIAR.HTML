@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enviar Mensajes de WhatsApp</title>
+    <style>
+        .header {
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button id="procesarBtn">PROCESAR</button>
+    </div>
+    <div id="mensajeArea">
+        <p style="color:red;">Por favor, deshabilite el bloqueador de ventanas emergentes para que esta página funcione correctamente.</p>
+    </div>
+
+    <script>
+        document.getElementById('procesarBtn').addEventListener('click', () => {
+            fetch('whauto.csv')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('No se pudo cargar el archivo whauto.csv');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    const links = data.split('\n').filter(line => line.trim() !== '').map(line => line.split(',')[0].trim());
+                    const cantidad = links.length;
+                    const mensaje = `CANTIDAD DE MENSAJES A ENVIAR: ${cantidad}`;
+                    
+                    if (confirm(mensaje)) {
+                        let i = 0;
+                        const mensajeArea = document.getElementById('mensajeArea');
+                        
+                        function enviarSiguiente() {
+                            if (i < cantidad) {
+                                window.open(links[i], '_blank');
+                                mensajeArea.innerText = `Enviando mensaje ${i + 1} de ${cantidad}...`;
+                                i++;
+                                setTimeout(enviarSiguiente, 10000);
+                            } else {
+                                mensajeArea.innerText = `CANTIDAD DE MENSAJES ENVIADOS: ${cantidad}`;
+                            }
+                        }
+                        enviarSiguiente();
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('mensajeArea').innerText = error.message;
+                    console.error('Error fetching or processing file:', error);
+                });
+        });
+    </script>
+</body>
+</html>
